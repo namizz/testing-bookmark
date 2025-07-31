@@ -1,5 +1,5 @@
 import { configureStore } from "@reduxjs/toolkit";
-import { api } from "./redux/api";
+import { api } from "../redux/api";
 import { setupListeners } from "@reduxjs/toolkit/query";
 
 export const store = configureStore({

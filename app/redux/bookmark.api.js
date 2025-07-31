@@ -1,16 +1,20 @@
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
+import { getSession } from "next-auth/react";
 export const api = createApi({
   reducerPath: "opportunities",
   baseQuery: fetchBaseQuery({
     baseUrl: "https://akil-backend.onrender.com/",
+    prepareHeaders: async (headers, { extra }) => {
+      const session = await getSession();
+      const token = session?.user.accessToken;
+      console.log("token", token);
+      if (token) {
+        headers.set("Authorization", `Bearer ${token}`);
+      }
+      return headers;
+    },
   }),
   endpoints: (builder) => ({
-    getJobs: builder.query({
-      query: () => "opportunities/search",
-    }),
-    getJobById: builder.query({
-      query: (id) => `/opportunities/${id}`,
-    }),
     getBookmark: builder.query({
       query: () => "bookmarks",
     }),
@@ -24,4 +28,8 @@ export const api = createApi({
   }),
 });
 
-export const { useGetJobsQuery, useGetJobByIdQuery } = api;
+export const {
+  useCreateBookmarkMutation,
+  useDeleteBookmarkMutation,
+  useGetBookmarkQuery,
+} = api;

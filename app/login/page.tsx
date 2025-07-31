@@ -42,9 +42,9 @@ const LogIn = () => {
       email: data.email,
       password: data.password,
     });
-
+    console.log(result);
     if (result?.error) {
-      setMsg(result.error);
+      setMsg("Incorrect Password or email address");
     } else {
       router.push("/");
     }

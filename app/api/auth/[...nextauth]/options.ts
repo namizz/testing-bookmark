@@ -24,29 +24,41 @@ export const options = {
           body: JSON.stringify(data),
         });
 
-        const user = await res.json();
-
-        if (!res.ok || !user.success) {
+        if (!res.ok) {
+          console.error("Login request failed:", res.status, await res.text());
           return null;
         }
+        const user = await res.json();
+        console.log("user", user);
 
-        return {
-          name: user.data.name || user.email,
-          email: user.data.email,
-          role: user.data.role || "user",
-          message: user.data.message,
-        };
+        return { user };
       },
     }),
   ],
 
   callbacks: {
     async jwt({ token, user }) {
-      if (user) token.role = user.role;
+      console.log("user2", user);
+      if (user?.user?.data) {
+        token.name = user.user.data.name;
+        token.id = user.user.data.id;
+        token.role = user.user.data.role;
+        token.profilePicUrl = user.user.data.profilePicUrl;
+        token.accessToken = user.user.data.accessToken;
+      }
+      console.log("first token", token);
       return token;
     },
     async session({ session, token }) {
-      if (session.user) session.user.role = token.role;
+      console.log("token", token);
+      if (session.user) {
+        session.user.id = token.id;
+        session.user.name = token.name;
+        session.user.email = token.email;
+        session.user.role = token.role;
+        session.user.accessToken = token.accessToken;
+      }
+      console.log("session", session);
       return session;
     },
   },

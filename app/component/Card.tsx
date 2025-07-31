@@ -1,5 +1,12 @@
 import CategoryItem from "./CategoryItem";
 import Link from "next/link";
+import { BsBookmark, BsBookmarkFill } from "react-icons/bs";
+import {
+  useCreateBookmarkMutation,
+  useDeleteBookmarkMutation,
+} from "../redux/bookmark.api";
+import { useState } from "react";
+
 interface cardProps {
   id?: string;
   title?: string;
@@ -9,7 +16,26 @@ interface cardProps {
   categories?: string[];
   type?: string;
   image?: string;
+  mark?: boolean;
 }
+
+interface BookmarkProps {
+  marked: boolean;
+  onclick: () => void;
+}
+
+const Bookmark = ({ marked, onclick }: BookmarkProps) => {
+  return (
+    <button onClick={onclick}>
+      {marked ? (
+        <BsBookmarkFill color="gold" className="border z-10" size={24} />
+      ) : (
+        <BsBookmark color="gray" size={24} className="border z-10" />
+      )}
+    </button>
+  );
+};
+
 const Card = ({
   id,
   title,
@@ -19,6 +45,7 @@ const Card = ({
   categories,
   type,
   image,
+  mark,
 }: cardProps) => {
   const colr = [
     "border-yellow-500 text-yellow-500",
@@ -30,50 +57,72 @@ const Card = ({
     "border-orange-500 text-orange-500",
     "border-sky-500 text-sky-500",
   ];
+  const [isBookmarked, setIsBookmarked] = useState(mark);
+
+  const [createBookmark] = useCreateBookmarkMutation();
+  const [deleteBookmark] = useDeleteBookmarkMutation();
+
+  const ToggleBookmark = async (e: React.MouseEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    console.log("clicked", id);
+    try {
+      if (isBookmarked) {
+        await deleteBookmark(id).unwrap();
+        setIsBookmarked(false);
+      } else {
+        await createBookmark(id).unwrap();
+        setIsBookmarked(true);
+      }
+    } catch (error) {
+      console.error("Bokkmark toggle error", error);
+    }
+  };
   return (
-    <Link href={`/job/${id}`}>
-      <div className="shadow-md border border-[#00000010] flex w-[900] rounded-3xl px-8 py-4 m-1">
-        <div className=" mx-3 shrink-0">
-          <img
-            className="w-16 h-16 rounded-full object-cover"
-            src={
-              image ||
-              "https://images.pexels.com/photos/1704488/pexels-photo-1704488.jpeg?auto=compress&cs=tinysrgb&dpr=1&w=500"
-            }
-            alt="comany image"
-          />
-        </div>
-        <div className=" px-8">
-          <h2 className="text-2xl font-semibold inline-block">
-            {title || "Social Media Assistant"}
-          </h2>
-          <p className=" my-3 text-gray-400">
-            {company || " Young Men Chiristian Association"} -
-            <span> {location || "Addis Ababa, Ethiopia"}</span>
-          </p>
-          <p className="mb-3">
-            {description ||
-              "Lorem ipsum dolor, sit amet consectetur adipisicing elit. Itaque, repellendus dolorum libero ea repellat quis vero officia architecto modi enim unde molestiae in eveniet maiores excepturi ratione quisquam? Iste, aperiam?"}
-          </p>
-          <div className="flex ">
+    // <Link href={`/job/${id}`}>
+    <div className="shadow-md border border-[#00000010] flex w-[900] rounded-3xl px-8 py-4 m-1">
+      <div className=" mx-3 shrink-0">
+        <img
+          className="w-16 h-16 rounded-full object-cover"
+          src={
+            image ||
+            "https://images.pexels.com/photos/1704488/pexels-photo-1704488.jpeg?auto=compress&cs=tinysrgb&dpr=1&w=500"
+          }
+          alt="company image"
+        />
+      </div>
+      <div className=" px-8">
+        <h2 className="text-2xl font-semibold inline-block">
+          {title || "Social Media Assistant"}
+        </h2>
+        <p className=" my-3 text-gray-400">
+          {company || " Young Men Chiristian Association"} -
+          <span> {location || "Addis Ababa, Ethiopia"}</span>
+        </p>
+        <p className="mb-3">
+          {description ||
+            "Lorem ipsum dolor, sit amet consectetur adipisicing elit. Itaque, repellendus dolorum libero ea repellat quis vero officia architecto modi enim unde molestiae in eveniet maiores excepturi ratione quisquam? Iste, aperiam?"}
+        </p>
+        <div className="flex ">
+          <CategoryItem
+            name={type || "REmote"}
+            className="bg-green-50 text-green-500"
+          />{" "}
+          <span className="text-3xl font-light text-gray-300 mx-1">|</span>
+          {categories?.map((category, index) => (
             <CategoryItem
-              name={type || "REmote"}
-              className="bg-green-50 text-green-500"
-            />{" "}
-            <span className="text-3xl font-light text-gray-300 mx-1">|</span>
-            {categories?.map((category, index) => (
-              <CategoryItem
-                key={String(index)}
-                name={category}
-                className={`border ${
-                  colr[Math.floor(Math.random() * colr.length)]
-                }`}
-              />
-            )) || <CategoryItem />}
-          </div>
+              key={String(index)}
+              name={category}
+              className={`border ${
+                colr[Math.floor(Math.random() * colr.length)]
+              }`}
+            />
+          )) || <CategoryItem />}
         </div>
       </div>
-    </Link>
+      <Bookmark marked={mark || false} onclick={ToggleBookmark} />
+    </div>
+    // </Link>
   );
 };
 
