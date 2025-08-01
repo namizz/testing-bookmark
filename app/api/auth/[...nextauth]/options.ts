@@ -39,12 +39,8 @@ export const options = {
   callbacks: {
     async jwt({ token, user }) {
       console.log("user2", user);
-      if (user?.user?.data) {
-        token.name = user.user.data.name;
-        token.id = user.user.data.id;
-        token.role = user.user.data.role;
-        token.profilePicUrl = user.user.data.profilePicUrl;
-        token.accessToken = user.user.data.accessToken;
+      if (user?.user) {
+        token.user = user.user;
       }
       console.log("first token", token);
       return token;
@@ -52,11 +48,7 @@ export const options = {
     async session({ session, token }) {
       console.log("token", token);
       if (session.user) {
-        session.user.id = token.id;
-        session.user.name = token.name;
-        session.user.email = token.email;
-        session.user.role = token.role;
-        session.user.accessToken = token.accessToken;
+        session.user = token.user;
       }
       console.log("session", session);
       return session;

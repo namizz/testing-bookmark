@@ -4,16 +4,14 @@ import Card from "./component/Card";
 import Box from "./component/Boxes";
 
 import { signOut, useSession } from "next-auth/react";
-import { redirect, useRouter } from "next/navigation";
+import { useRouter } from "next/navigation";
 import { useEffect } from "react";
-import { BiBookmarks } from "react-icons/bi";
-import { BsBookmark, BsBookmarkFill } from "react-icons/bs";
 
 export default function Home() {
   const { data: session, status } = useSession();
   const router = useRouter();
   const { data, isLoading, isError } = useGetJobsQuery();
-  console.log(session);
+  //   console.log(session);
 
   useEffect(() => {
     if (status === "unauthenticated") {
@@ -24,7 +22,7 @@ export default function Home() {
   if (status === "loading") return <div>Loading...</div>;
   if (!session) return null;
 
-  console.log(data?.data);
+  //   console.log(data?.data);
   // const jobs = data.job_postings;
 
   if (isLoading) {
@@ -49,38 +47,32 @@ export default function Home() {
 
   return (
     <div>
-      <div className="flex justify-end gap-3">
-        <div
-          className="flex gap-2 items-center rounded-2xl border p-1 border-gray-200"
-          onClick={() => redirect("/bookmark")}
-        >
-          <BsBookmarkFill color="gold" />
-          <p className="text-sm">BookMarked</p>
-        </div>
-        <div>
-          <p>{session.user?.data.name}</p>
-          <button className="border" onClick={() => signOut()}>
-            Sign Out
-          </button>
-        </div>
+      <div>
+        <p>Hello, {session.user?.data.name}</p>
+        <button className="border" onClick={() => signOut()}>
+          Sign Out
+        </button>
       </div>
       <div className="flex justify-center">
         <Box title="Opportunities" className="py-0 my-0">
           <p className="text-gray-400 mb-6">Show {data.data.length} result</p>
-          {data.data.map((job, index) => (
-            <Card
-              key={job.id}
-              id={job.id}
-              image={job.logoUrl}
-              title={job.title}
-              description={job.description}
-              location={job.location}
-              company={job.orgName}
-              categories={job.categories}
-              type={job.opType}
-              mark={job.isBookmarked}
-            />
-          ))}
+          {data.data.map(
+            (job, index) =>
+              job.isBookmarked && (
+                <Card
+                  key={job.id}
+                  id={job.id}
+                  image={job.logoUrl}
+                  title={job.title}
+                  description={job.description}
+                  location={job.location}
+                  company={job.orgName}
+                  categories={job.categories}
+                  type={job.opType}
+                  mark={job.isBookmarked}
+                />
+              )
+          )}
         </Box>
       </div>
     </div>

@@ -4,9 +4,9 @@ export const api = createApi({
   reducerPath: "opportunities",
   baseQuery: fetchBaseQuery({
     baseUrl: "https://akil-backend.onrender.com/",
-    prepareHeaders: async (headers, { extra }) => {
+    prepareHeaders: async (headers) => {
       const session = await getSession();
-      const token = session?.user.accessToken;
+      const token = session?.user?.data.accessToken;
       console.log("token", token);
       if (token) {
         headers.set("Authorization", `Bearer ${token}`);
@@ -22,8 +22,7 @@ export const api = createApi({
       query: (id) => ({ url: `bookmarks/${id}`, method: "POST" }),
     }),
     deleteBookmark: builder.mutation({
-      query: (id) => ({ url: `bookmarks/${id}` }),
-      method: "DELETE",
+      query: (id) => ({ url: `bookmarks/${id}`, method: "DELETE" }),
     }),
   }),
 });

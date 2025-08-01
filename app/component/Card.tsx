@@ -1,10 +1,7 @@
 import CategoryItem from "./CategoryItem";
 import Link from "next/link";
-import { BsBookmark, BsBookmarkFill } from "react-icons/bs";
-import {
-  useCreateBookmarkMutation,
-  useDeleteBookmarkMutation,
-} from "../redux/bookmark.api";
+import Bookmark from "./BookMarkButt";
+
 import { useState } from "react";
 
 interface cardProps {
@@ -18,23 +15,6 @@ interface cardProps {
   image?: string;
   mark?: boolean;
 }
-
-interface BookmarkProps {
-  marked: boolean;
-  onclick: () => void;
-}
-
-const Bookmark = ({ marked, onclick }: BookmarkProps) => {
-  return (
-    <button onClick={onclick}>
-      {marked ? (
-        <BsBookmarkFill color="gold" className="border z-10" size={24} />
-      ) : (
-        <BsBookmark color="gray" size={24} className="border z-10" />
-      )}
-    </button>
-  );
-};
 
 const Card = ({
   id,
@@ -57,27 +37,7 @@ const Card = ({
     "border-orange-500 text-orange-500",
     "border-sky-500 text-sky-500",
   ];
-  const [isBookmarked, setIsBookmarked] = useState(mark);
 
-  const [createBookmark] = useCreateBookmarkMutation();
-  const [deleteBookmark] = useDeleteBookmarkMutation();
-
-  const ToggleBookmark = async (e: React.MouseEvent) => {
-    e.preventDefault();
-    e.stopPropagation();
-    console.log("clicked", id);
-    try {
-      if (isBookmarked) {
-        await deleteBookmark(id).unwrap();
-        setIsBookmarked(false);
-      } else {
-        await createBookmark(id).unwrap();
-        setIsBookmarked(true);
-      }
-    } catch (error) {
-      console.error("Bokkmark toggle error", error);
-    }
-  };
   return (
     // <Link href={`/job/${id}`}>
     <div className="shadow-md border border-[#00000010] flex w-[900] rounded-3xl px-8 py-4 m-1">
@@ -120,7 +80,7 @@ const Card = ({
           )) || <CategoryItem />}
         </div>
       </div>
-      <Bookmark marked={mark || false} onclick={ToggleBookmark} />
+      <Bookmark marked={mark || false} id={id} />
     </div>
     // </Link>
   );
