@@ -6,8 +6,7 @@ import Box from "./component/Boxes";
 import { signOut, useSession } from "next-auth/react";
 import { redirect, useRouter } from "next/navigation";
 import { useEffect } from "react";
-import { BiBookmarks } from "react-icons/bi";
-import { BsBookmark, BsBookmarkFill } from "react-icons/bs";
+import { BsBookmarkFill } from "react-icons/bs";
 
 export default function Home() {
   const { data: session, status } = useSession();
@@ -49,17 +48,20 @@ export default function Home() {
 
   return (
     <div>
-      <div className="flex justify-end gap-3">
-        <div
+      <div className="flex justify-end gap-3 p-4">
+        <button
           className="flex gap-2 items-center rounded-2xl border p-1 border-gray-200"
           onClick={() => redirect("/bookmark")}
         >
           <BsBookmarkFill color="gold" />
-          <p className="text-sm">BookMarked</p>
-        </div>
-        <div>
-          <p>{session.user?.data.name}</p>
-          <button className="border" onClick={() => signOut()}>
+          <p className="text-sm">BookMarks</p>
+        </button>
+        <div className="text-center">
+          <p className="text-xs">{session.user?.data.name}</p>
+          <button
+            className="border p-1 rounded-2xl bg-red-400 text-white"
+            onClick={() => signOut()}
+          >
             Sign Out
           </button>
         </div>

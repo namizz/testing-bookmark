@@ -37,7 +37,7 @@ export const options = {
   ],
 
   callbacks: {
-    async jwt({ token, user }) {
+    async jwt({ token, user }: { token: any; user: any }) {
       console.log("user2", user);
       if (user?.user) {
         token.user = user.user;
@@ -45,7 +45,7 @@ export const options = {
       console.log("first token", token);
       return token;
     },
-    async session({ session, token }) {
+    async session({ session, token }: { session: any; token: any }) {
       console.log("token", token);
       if (session.user) {
         session.user = token.user;
