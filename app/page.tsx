@@ -12,7 +12,7 @@ export default function Home() {
   const { data: session, status } = useSession();
   const router = useRouter();
   const { data, isLoading, isError } = useGetJobsQuery();
-  console.log(session);
+  console.log("session", session);
 
   useEffect(() => {
     if (status === "unauthenticated") {
@@ -50,6 +50,7 @@ export default function Home() {
     <div>
       <div className="flex justify-end gap-3 p-4">
         <button
+          data-cy="nav-bookmarks"
           className="flex gap-2 items-center rounded-2xl border p-1 border-gray-200"
           onClick={() => redirect("/bookmark")}
         >

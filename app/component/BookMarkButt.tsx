@@ -34,7 +34,7 @@ const Bookmark = ({ id, marked }: BookmarkProps) => {
     }
   };
   return (
-    <button onClick={ToggleBookmark}>
+    <button data-cy="bookmark-toggle" onClick={ToggleBookmark}>
       {marked ? (
         <BsBookmarkFill color="gold" className="border z-10" size={24} />
       ) : (

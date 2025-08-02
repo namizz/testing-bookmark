@@ -35,3 +35,29 @@
 //     }
 //   }
 // }
+// cypress/support/commands.ts
+
+declare global {
+  namespace Cypress {
+    interface Chainable {
+      login(): Chainable<void>;
+    }
+  }
+}
+
+export {};
+
+Cypress.Commands.add("login", () => {
+  cy.intercept("GET", "/api/auth/session", {
+    statusCode: 200,
+    body: {
+      user: {
+        data: {
+          name: "Test User",
+          // add any other fields your UI reads, e.g., email or id
+        },
+      },
+      expires: new Date(Date.now() + 3600 * 1000).toISOString(),
+    },
+  }).as("getSession");
+});

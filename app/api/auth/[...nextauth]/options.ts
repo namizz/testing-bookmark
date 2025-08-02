@@ -17,11 +17,15 @@ export const options = {
 
     CredentialsProvider({
       name: "Credentials",
-      async authorize(data) {
+      credentials: {
+        email: { label: "Email", type: "email", placeholder: "your@email.com" },
+        password: { label: "Password", type: "password" },
+      },
+      async authorize(credentials) {
         const res = await fetch("https://akil-backend.onrender.com/login", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify(data),
+          body: JSON.stringify(credentials),
         });
 
         if (!res.ok) {
@@ -31,7 +35,7 @@ export const options = {
         const user = await res.json();
         console.log("user", user);
 
-        return { user };
+        return user;
       },
     }),
   ],
@@ -39,8 +43,8 @@ export const options = {
   callbacks: {
     async jwt({ token, user }: { token: any; user: any }) {
       console.log("user2", user);
-      if (user?.user) {
-        token.user = user.user;
+      if (user) {
+        token.user = user;
       }
       console.log("first token", token);
       return token;
